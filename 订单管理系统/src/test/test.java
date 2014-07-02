@@ -5,17 +5,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.orsystem.Service.CustomerService;
-import com.orsystem.Service.EmployeeService;
-import com.orsystem.Service.ManagerService;
-import com.orsystem.Service.OrderMasterService;
-import com.orsystem.Service.ProductService;
-import com.orsystem.Service.OdService;
-import com.orsystem.modal.Customer;
-import com.orsystem.modal.Employee;
-import com.orsystem.modal.Manager;
-import com.orsystem.modal.OrderMaster;
-import com.orsystem.modal.Product;
+import com.orsystem.DataService.CustomerService;
+import com.orsystem.DataService.EmployeeService;
+import com.orsystem.DataService.ManagerService;
+import com.orsystem.DataService.OdService;
+import com.orsystem.DataService.OrderMasterService;
+import com.orsystem.DataService.ProductService;
+import com.orsystem.DataTable.Customer;
+import com.orsystem.DataTable.Employee;
+import com.orsystem.DataTable.Manager;
+import com.orsystem.DataTable.OrderMaster;
+import com.orsystem.DataTable.Product;
+import com.orsystem.Modal.cHistoryOrder;
+import com.orsystem.control.CUI_Control;
+import com.orsystem.control.dis_Date;
+import com.orsystem.control.dis_historyOrder;
 
 
 
@@ -33,11 +37,44 @@ public class test {
 //		String sql="delete from employee where employeeno='E2008005'";
 //		JDBCTools.update(sql);
 		//testManager();
-		//testCustomer();
+		//testEmployee();
 		//testCustomer();
 		//testOrderMaster();
-		testProduct();
+		//testProduct();
+//		dis_Date d=new dis_Date();
+//		System.out.println(d.get_curDate());
+//		
+		//测试显示顾客历史订单
+//		List<cHistoryOrder> l=new ArrayList<cHistoryOrder>();
+//		dis_historyOrder d=new dis_historyOrder();
+//		l=d.getHisOrderBycNo("c2005001");
+//		for(int i=0;i<l.size();i++){
+//			System.out.println(l.get(i).getOrderNo());
 		
+		//测试生成订单号
+	//	CUI_Control c=new CUI_Control();
+//		c.createOrderNo();
+//		System.out.println(c.getOrderNo());
+		
+		//测试往购物车中添加订单的方法
+		//c.addOrder("1223", "巧克力", "4", "50");
+		
+		//测试显示员工的历史订单
+//		List<cHistoryOrder> l=new ArrayList<cHistoryOrder>();
+//		dis_historyOrder d=new dis_historyOrder();
+//		l=d.getHisOrderByeName("E2005003");
+//		for(int i=0;i<l.size();i++){
+//			System.out.println(l.get(i).getOrderNo());
+			OrderMasterService om=new OrderMasterService();
+			String sql="update ordermaster set saleno='E2005003' where orderno=?";
+			String[] orderno=new String[1];
+			orderno[0]="201406040038";
+			for(int i=0;i<orderno.length;i++){
+				
+				om.updateOrderMaster(sql, orderno[i]);
+				}
+			
+			
 		
 	}
 	//测试系统管理员
@@ -79,7 +116,7 @@ public class test {
 			//employeeservice.addEmployee("E2008005","张三","男","1990-12-08","厦门","13877654231","2008-08-12","办公室","职员","4500");
 			
 			//测试按员工号删除员工
-			employeeservice.deleteEmployeeById("Ettt");
+			employeeservice.deleteEmployeeById("E2005001");
 			
 			//测试按姓名删除员工
 			//employeeservice.deleteEmployeeByName("李虹冰");
@@ -118,9 +155,9 @@ public class test {
 					
 					
 					//测试按照客戶号查找客户信息
-//					Customer customer=new Customer();
-//					customer=customerservice.queryCustomerById("c2005001");
-//					System.out.println(customer);
+					Customer customer=new Customer();
+					customer=customerservice.queryCustomerById("c2005001");
+					System.out.println(customer);
 					
 //					//测试按照客户名来查找客户信息
 //				Customer customer=new Customer();

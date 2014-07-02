@@ -3,7 +3,11 @@ package com.orsystem.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Label;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,13 +36,18 @@ import java.util.List;
 import javax.swing.JButton;
 
 
-import com.orsystem.Service.CustomerService;
-import com.orsystem.Service.EmployeeService;
+import com.orsystem.DataService.CustomerService;
+import com.orsystem.DataService.EmployeeService;
+import com.orsystem.DataService.ProductService;
+import com.orsystem.DataTable.Customer;
+import com.orsystem.DataTable.Employee;
+import com.orsystem.DataTable.Product;
 import com.orsystem.TableModal.CTableModal;
 import com.orsystem.TableModal.ETableModal;
 import com.orsystem.TableModal.PTableModal;
-import com.orsystem.modal.Customer;
-import com.orsystem.modal.Employee;
+import java.awt.Color;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 
 public class Main extends JFrame implements ActionListener{
 	//主界面的主Panel
@@ -46,7 +55,7 @@ public class Main extends JFrame implements ActionListener{
 	//选项卡Panel
 	private JTabbedPane tabP;
 	//存放在选项卡里的Panel
-	private JPanel JP_fir,JP_em,JP_cm,JP_omm,JP_prm,JP_zhm;
+	private JPanel JP_fir,JP_em,JP_cm,JP_prm;
 	//**********员工页部分的信息*****/////////////////
 	//建立一个表格，存放员工信息
 	private JTable eTable;
@@ -81,7 +90,25 @@ public class Main extends JFrame implements ActionListener{
 	//客户管理页的三个按钮
 	private JButton cbtn_change,cbtn_refresh,cbtn_add,cbtn_delete;
 	////////////*******员工页部分的信息**************//////////
-
+	
+	/////*********商品页开始部分*****************//////////////
+	//商品数据库服务类
+	ProductService ps;
+	//存放全部商品信息的集合
+	List<Product> pList;
+	//显示产品信息的表格
+	private JTable pTable;
+	//表格Modal
+	private PTableModal pTableModal;
+	//存放商品信息的JTextField
+	JTextField jtp_1,jtp_2,jtp_3,jtp_4;
+	//商品管理页的三个按钮
+	private JButton pbtn_change,pbtn_refresh,pbtn_add,pbtn_delete;
+	//标记JTextField是否可以编辑
+	private boolean pflag=false;
+	
+/////*********商品页结束部分*****************//////////////
+	
 	/**
 	 * Launch the application.
 	 * @throws SQLException 
@@ -89,7 +116,7 @@ public class Main extends JFrame implements ActionListener{
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
-	new Main();
+	//new Main();
 	}
 
 	/**
@@ -98,11 +125,11 @@ public class Main extends JFrame implements ActionListener{
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
 	 */
-	public Main() throws IOException, ClassNotFoundException, SQLException {
+	public Main(final String managerid) throws IOException, ClassNotFoundException, SQLException {
 		
 		
 		this.setSize(850, 600);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		this.setVisible(true);
 		
 		this.setResizable(false);
@@ -119,7 +146,38 @@ public class Main extends JFrame implements ActionListener{
 		
 		//存放首页的主JPanel
 		 JP_fir = new JPanel();
+				
+				 
+		 JP_fir.setBackground(new Color(0, 255, 153));
 		 tabP.addTab("首页",JP_fir);
+		 JP_fir.setLayout(null);
+		 
+		 JLabel lblNewLabel = new JLabel("\u6B22\u8FCE\u6765\u5230\u8BA2\u5355\u7BA1\u7406\u7CFB\u7EDF");
+		 lblNewLabel.setFont(new Font("宋体", Font.PLAIN, 54));
+		 lblNewLabel.setBounds(132, 182, 639, 118);
+		 JP_fir.add(lblNewLabel);
+		 
+		 JButton btn_MchangeP = new JButton("\u4FEE\u6539\u5BC6\u7801");
+		 btn_MchangeP.addActionListener(new ActionListener() {
+		 	public void actionPerformed(ActionEvent e) {
+		 		new changePasswdUI("manager",managerid);
+		 	}
+		 });
+		 btn_MchangeP.setForeground(new Color(0, 0, 255));
+		 btn_MchangeP.setFont(new Font("黑体", Font.PLAIN, 20));
+		 btn_MchangeP.setBounds(581, 10, 120, 38);
+		 JP_fir.add(btn_MchangeP);
+		 
+		 JButton btn_exit = new JButton("\u9000\u51FA");
+		 btn_exit.addActionListener(new ActionListener() {
+		 	public void actionPerformed(ActionEvent e) {
+		 		Main.this.dispose();
+		 	}
+		 });
+		 btn_exit.setForeground(new Color(0, 0, 255));
+		 btn_exit.setFont(new Font("黑体", Font.PLAIN, 20));
+		 btn_exit.setBounds(711, 10, 93, 38);
+		 JP_fir.add(btn_exit);
 		
 ////****************************员工管理页部分的代码***************************//////////////		 
 		 //存放员工管理页的主JPnel
@@ -145,36 +203,6 @@ public class Main extends JFrame implements ActionListener{
 		JLabel lblNewLabel_4 = new JLabel("\u5458\u5DE5\u4FE1\u606F\u680F");
 		lblNewLabel_4.setFont(new Font("宋体",Font.BOLD+Font.ITALIC,25));
 		jP_emp1_1.add(lblNewLabel_4);
-		
-		//北部布局嵌套的中部布局
-		JPanel JP_emp1_2 = new JPanel();
-		JP_emp1.add(JP_emp1_2,BorderLayout.CENTER);
-		JP_emp1_2.setLayout(new BoxLayout(JP_emp1_2, BoxLayout.X_AXIS));
-		
-		JLabel Lb_dep = new JLabel("\u90E8\u95E8");
-		
-		JP_emp1_2.add(Lb_dep);
-		
-		JComboBox comboBox = new JComboBox();
-		JP_emp1_2.add(comboBox);
-		
-		JLabel Lb_sex = new JLabel("\u6027\u522B");
-		JP_emp1_2.add(Lb_sex);
-		
-		JComboBox comboBox_1 = new JComboBox();
-		JP_emp1_2.add(comboBox_1);
-		
-		JLabel Lb_hs = new JLabel("\u804C\u52A1");
-		JP_emp1_2.add(Lb_hs);
-		
-		JComboBox comboBox_2 = new JComboBox();
-		JP_emp1_2.add(comboBox_2);
-		
-		JLabel Lb_sa = new JLabel("\u85AA\u6C34");
-		JP_emp1_2.add(Lb_sa);
-		
-		JComboBox comboBox_3 = new JComboBox();
-		JP_emp1_2.add(comboBox_3);
 		
 		//北部布局嵌套的南部布局
 		JPanel JP_emp1_3 = new JPanel();
@@ -485,18 +513,162 @@ public class Main extends JFrame implements ActionListener{
 		JP_cmp2_1_3.add(cbtn_delete);
 		
 		
-////////////////******************************************//////////////////////////////////
-/********************顾客管理页的结束界限***************************************************/			
-		 JP_omm = new JPanel();
-		tabP.add("订单管理",  JP_omm);
-		
+	////****************************商品管理页部分的代码***************************//////////////		 
+		 //存放商品管理页的主JPnel
 		 JP_prm = new JPanel();
 		tabP.add("产品管理", JP_prm);
 		
-		MainPanel.add(tabP);
+		//往商品管理页添加一个主JPanel
+		JPanel JP_pm = new JPanel();
+		JP_prm.add(JP_pm);
+		JP_pm.setLayout(new BorderLayout(0, 0));
 		
-		 JP_zhm = new JPanel();
-		tabP.add("账号管理",  JP_zhm);
+///////////**************************/////
+///////////**商品管理北部布局*********/////
+		JPanel JP_pm1 = new JPanel();
+		JP_pm.add(JP_pm1, BorderLayout.PAGE_START);
+		JP_pm1.setLayout(new BorderLayout(0, 0));
+		
+		//北部布局嵌套的北部布局
+		JPanel JP_pm1_1 = new JPanel();
+		JP_pm1.add(JP_pm1_1,BorderLayout.NORTH);
+		JP_pm1_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JLabel lb_pMsg = new JLabel("商品信息栏");
+		lb_pMsg.setFont(new Font("宋体",Font.BOLD+Font.ITALIC,25));
+		JP_pm1_1.add(lb_pMsg);
+		
+		//北部布局嵌套的中部布局
+		
+		
+		//北部布局嵌套的南部布局
+		JPanel JP_pm1_3 = new JPanel();
+		JP_pm1.add(JP_pm1_3, BorderLayout.SOUTH);
+		
+		//初始化商品数据库服务类
+		ps=new ProductService();
+	
+		pList=ps.getAllProduct();
+		
+		//创建表格Modal
+		pTableModal=new PTableModal(pList);
+		//创建表格
+		pTable=new JTable();
+		//设置表格Modal
+		pTable.setModel(pTableModal);
+		
+	    //设置每一列的高度
+		pTable.setRowHeight(22);
+		//给eTable加上一个鼠标事件监听器对象
+		 pTable.addMouseListener(new java.awt.event.MouseAdapter(){
+     	 public void mouseClicked(MouseEvent ev) {//仅当鼠标单击时响应
+     		 //得到选中的行列的索引值
+     		int r= pTable.getSelectedRow();
+     		Product p=new Product();
+     		p=pList.get(r);
+     		pDisplay(p.getProductNo(),p.getProductName(),p.getProductClass(),String.valueOf(p.getProductPrice()));
+
+     	 }
+      });
+		//添加表格到ScrollPane上
+		JScrollPane PscrollPane1 = new JScrollPane(pTable);
+		PscrollPane1.setPreferredSize(new Dimension(800, 200));
+		JP_pm1_3.add(PscrollPane1);
+		
+		JPanel JP_pm1_2 = new JPanel();
+		JP_pm1.add(JP_pm1_2, BorderLayout.WEST);
+		JP_pm1_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+///////////**************************/////
+///////////**商品管理中部布局*********/////
+		JPanel JP_pm2 = new JPanel();
+		JP_pm.add(JP_pm2, BorderLayout.PAGE_END);
+		
+		JP_pm2.setLayout(new BorderLayout(0, 0));
+		
+		JPanel JP_pm2_1 = new JPanel();
+		JP_pm2.add(JP_pm2_1);
+		JP_pm2_1.setLayout(new BorderLayout(0, 0));
+		
+		JPanel JP_pm2_1_1 = new JPanel();
+		JP_pm2_1.add(JP_pm2_1_1, BorderLayout.NORTH);
+		JP_pm2_1_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JLabel lb_pManager = new JLabel("商品信息管理栏");
+		lb_pManager.setFont(new Font("黑体", Font.PLAIN, 25));
+		//设置字体
+		clabel.setFont(new Font("宋体",Font.BOLD+Font.ITALIC,25));
+		JP_pm2_1_1.add(lb_pManager);
+		
+		JPanel JP_pm2_1_2 = new JPanel(new GridLayout(2,4));
+	
+		JLabel jlp_1=new JLabel("商品号",JLabel.CENTER);
+		JLabel jlp_2=new JLabel("商品名",JLabel.CENTER);
+		JLabel jlp_3=new JLabel("商品类型",JLabel.CENTER);
+		JLabel jlp_4=new JLabel("商品价格",JLabel.CENTER);
+
+		
+		jtp_1=new JTextField();
+		jtp_1.setFont(new Font("黑体",Font.BOLD+Font.ITALIC,20));
+		jtp_1.setEditable(false);
+		
+		jtp_2=new JTextField();
+		jtp_2.setFont(new Font("黑体",Font.BOLD+Font.ITALIC,20));
+		jtp_2.setEditable(false);
+		 jtp_3=new JTextField();
+		jtp_3.setFont(new Font("黑体",Font.BOLD+Font.ITALIC,20));
+		jtp_3.setEditable(false);
+		jtp_4=new JTextField();
+		jtp_4.setFont(new Font("宋体",Font.BOLD+Font.ITALIC,20));
+		jtp_4.setEditable(false);
+		
+		
+		JP_pm2_1_2.add(jlp_1);
+		JP_pm2_1_2.add(jtp_1);
+		JP_pm2_1_2.add(jlp_2);
+		JP_pm2_1_2.add(jtp_2);
+		JP_pm2_1_2.add(jlp_3);
+		JP_pm2_1_2.add(jtp_3);
+		JP_pm2_1_2.add(jlp_4);
+		JP_pm2_1_2.add(jtp_4);
+		
+		
+		
+		
+		
+		JP_pm2_1.add(JP_pm2_1_2, BorderLayout.CENTER);
+		
+		JPanel JP_pm2_1_3 = new JPanel();
+		JP_pm2_1.add(JP_pm2_1_3, BorderLayout.SOUTH);
+		
+		pbtn_change = new JButton("\u4FEE\u6539");
+		//为按钮增加监听事件
+		pbtn_change.addActionListener(this);
+		
+		JP_pm2_1_3.add(pbtn_change);
+		
+		 pbtn_add = new JButton("增加商品");
+		//为添加按钮设置监听事件
+		 pbtn_add.addActionListener(this);
+		 JP_pm2_1_3.add(pbtn_add);
+		
+		 pbtn_refresh = new JButton("\u5237\u65B0");
+		//为添加按钮设置监听事件
+		 pbtn_refresh.addActionListener(this);
+		JP_pm2_1_3.add(pbtn_refresh);
+		
+		
+		
+		 pbtn_delete = new JButton("删除商品");
+		 //为删除按钮设置监听事件
+		 pbtn_delete.addActionListener(this);
+		JP_pm2_1_3.add(pbtn_delete);
+		
+		
+////////////////******************************************//////////////////////////////////
+/********************商品管理页的结束界限***************************************************/			
+		
+		MainPanel.add(tabP);
 	}
 	///**************员工页方法部分**********//////
 	//刷新员工表格的方法
@@ -617,6 +789,62 @@ public class Main extends JFrame implements ActionListener{
 		}
 	}
 	////**客户页方法结束界限****//////////////
+	///**************产品页方法部分**********//////
+	//刷新客户表格的方法
+	public void repTable() throws IOException, ClassNotFoundException, SQLException{
+		pList=ps.getAllProduct();
+		/**更新表格信息***/
+		//创建表格Modal
+		pTableModal=new PTableModal(pList);
+		//设置表格Modal
+		pTable.setModel(pTableModal);
+	}
+	/**
+	 * 设置JTextField里面显示客户信息的方法
+	 * @param productNo
+	 * @param productName
+	 * @param productClass
+	 * @param productPrice
+	 */
+	public void pDisplay(String productNo,String productName,String productClass,String productPrice){
+		jtp_1.setText(productNo);
+		jtp_2.setText(productName);
+		jtp_3.setText(productClass);
+		jtp_4.setText(productPrice);
+	//	jtp_5.setText(zip);
+	
+		
+	}
+	//获取JTextField里面员工信息的方法
+	public Product getpMsg(){
+		Product p = new Product();
+	p.setProductNo(jtp_1.getText().toString());
+	p.setProductName(jtp_2.getText().toString());
+	p.setProductClass(jtp_3.getText().toString());
+	p.setProductPrice(Float.valueOf(jtp_4.getText().toString()));
+	
+		return p;
+		
+	}
+	//将显示客户信息的文本区域显示成可编辑或不可编辑的
+	public void setpEdited(){
+		//假如原来不可编辑则显示成可编辑的,否则显示成不可编辑的
+		if(pflag==false){
+		jtp_2.setEditable(true);
+		jtp_3.setEditable(true);
+		jtp_4.setEditable(true);
+	
+		pflag=true;
+		}
+		else{
+			jtp_2.setEditable(false);
+			jtp_3.setEditable(false);
+			jtp_4.setEditable(false);
+			
+			pflag=false;
+		}
+	}
+	////**客户页方法结束界限****//////////////
 	
 	/////***********公共方法部分*****////////////
 	public void actionPerformed(ActionEvent arg0) {
@@ -712,34 +940,7 @@ public class Main extends JFrame implements ActionListener{
 				}
 				
 		}
-		else if(arg0.getSource()==cbtn_change){
-			if(cbtn_change.getText().equals("修改")){
-				setcEdited();
-				cbtn_change.setText("完成");
-			}
-				else{
-					setcEdited();
-					Customer c=new Customer();
-					c=getcMsg();
-					try {
-						cservice.update(c);
-						//刷新表格
-						recTable();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					
-					cbtn_change.setText("修改");
-				}
-				
-		}
+		
 		
 		else if(arg0.getSource()==cbtn_add){
 			new CustomerAdd();
@@ -761,6 +962,69 @@ public class Main extends JFrame implements ActionListener{
 			//***更新表格**////
 			try {
 				recTable();
+				JOptionPane.showMessageDialog(this,"删除成功!!");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		
+		}
+		else if(arg0.getSource()==pbtn_change){
+			if(pbtn_change.getText().equals("修改")){
+				setpEdited();
+				pbtn_change.setText("完成");
+			}
+				else{
+					setpEdited();
+					Product p=new Product();
+					p=getpMsg();
+					try {
+						ps.update(p);
+						//刷新表格
+						repTable();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					pbtn_change.setText("修改");
+				}
+				
+		}
+		
+		
+		else if(arg0.getSource()==pbtn_add){
+			new ProductAdd();
+				
+		}
+		else if(arg0.getSource()==pbtn_refresh){
+			try {
+				repTable();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+		}
+		else if(arg0.getSource()==pbtn_delete){
+			Product p=new Product();
+			p=getpMsg();
+			ps.deleteProductById(p.getProductNo());
+			//***更新表格**////
+			try {
+				repTable();
 				JOptionPane.showMessageDialog(this,"删除成功!!");
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block

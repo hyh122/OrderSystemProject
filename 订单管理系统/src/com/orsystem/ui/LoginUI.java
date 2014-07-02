@@ -30,7 +30,7 @@ import javax.swing.JPasswordField;
 import com.orsystem.control.LoginControl;
 
 public class LoginUI extends JFrame implements ActionListener{
-
+	
 	private JPanel contentPane;
 	private JTextField JT_acount;
 	private JPasswordField JPa_passwd;
@@ -130,18 +130,21 @@ public class LoginUI extends JFrame implements ActionListener{
 		//将单选按钮添加到同一组中
 		ButtonGroup  bg=new ButtonGroup();
 		 JR_em = new JRadioButton("\u5458\u5DE5");
+		 JR_em.setForeground(new Color(0, 0, 255));
 		JR_em.setBackground(Color.GREEN);
-		JR_em.setFont(new Font("宋体", Font.PLAIN, 15));
+		JR_em.setFont(new Font("黑体", Font.PLAIN, 15));
 		//设置员工某人已经被选中
 		JR_em.setSelected(true);
 		
 		 JR_cm = new JRadioButton("\u5BA2\u6237");
+		 JR_cm.setForeground(new Color(0, 0, 255));
 		JR_cm.setBackground(Color.GREEN);
-		JR_cm.setFont(new Font("宋体", Font.PLAIN, 15));
+		JR_cm.setFont(new Font("黑体", Font.PLAIN, 15));
 		
 		 JR_sm = new JRadioButton("\u7CFB\u7EDF\u7BA1\u7406\u5458");
+		 JR_sm.setForeground(new Color(0, 0, 255));
 		JR_sm.setBackground(Color.GREEN);
-		JR_sm.setFont(new Font("宋体", Font.PLAIN, 15));
+		JR_sm.setFont(new Font("黑体", Font.PLAIN, 15));
 		//将单选按钮添加到同一组中
 		bg.add(JR_em);
 		bg.add(JR_cm);
@@ -187,13 +190,13 @@ public class LoginUI extends JFrame implements ActionListener{
 		
 		 btn_login = new JButton("\u767B\u5F55");
 		btn_login.setBackground(Color.PINK);
-		btn_login.setFont(new Font("宋体", Font.PLAIN, 25));
+		btn_login.setFont(new Font("黑体", Font.PLAIN, 25));
 		//为登录按钮添加监听事件
 		btn_login.addActionListener(this);
 		
 		btn_cancel = new JButton("\u53D6\u6D88");
 		btn_cancel.setBackground(Color.PINK);
-		btn_cancel.setFont(new Font("宋体", Font.PLAIN, 25));
+		btn_cancel.setFont(new Font("黑体", Font.PLAIN, 25));
 		//为取消按钮添加监听
 		btn_cancel.addActionListener(this);
 		
@@ -222,6 +225,8 @@ public class LoginUI extends JFrame implements ActionListener{
 		///**************************分组布局部分代码****************************************////////////////////	
 		Spanel.setLayout(gl_Spanel);
 	}
+
+
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

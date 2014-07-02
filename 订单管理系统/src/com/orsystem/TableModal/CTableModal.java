@@ -4,8 +4,8 @@ import java.util.List;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import com.orsystem.modal.Customer;
-import com.orsystem.modal.Employee;
+import com.orsystem.DataTable.Customer;
+import com.orsystem.DataTable.Employee;
 
 /**
  * 用以在JTable中显示Employee对象的TableModel实现类

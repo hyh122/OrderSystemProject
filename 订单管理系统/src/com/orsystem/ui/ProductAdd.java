@@ -1,16 +1,12 @@
 package com.orsystem.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-
-import com.mysql.jdbc.Statement;
-import com.orsystem.DataService.CustomerService;
-import com.orsystem.DataService.EmployeeService;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,9 +16,12 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class CustomerAdd extends JFrame implements ActionListener{
+import com.orsystem.DataService.CustomerService;
+import com.orsystem.DataService.ProductService;
+
+public class ProductAdd extends JFrame implements ActionListener{
 	//员工业务服务方法
-	private CustomerService cservice;
+	private ProductService pservice;
 	
 	JPanel pl1,pl2,pl3;
 	JLabel text;
@@ -36,32 +35,31 @@ public class CustomerAdd extends JFrame implements ActionListener{
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		CustomerAdd qq=new CustomerAdd();
+		new ProductAdd();
 	}
-	public CustomerAdd(){
-		cservice=new CustomerService();
+	public ProductAdd(){
+		pservice=new ProductService();
 //		Toolkit tk=Toolkit.getDefaultToolkit();
 //		Image img=tk.getImage("image/C.gif");
 //		this.setIconImage(img);
 		pl1=new JPanel();
-		pl2=new JPanel(new GridLayout(6,2));
+		pl2=new JPanel(new GridLayout(4,2));
 		pl3=new JPanel();
-		text=new JLabel("请输入要注册的客户信息,完成点击提交");
-		jl1=new JLabel("顾客号",JLabel.CENTER);
+		text=new JLabel("请输入要新增的商品信息");
+		text.setFont(new Font("黑体", Font.PLAIN, 20));
+		jl1=new JLabel("商品号",JLabel.CENTER);
 		jt1=new JTextField();
 		jt1.setSize(10,20);
-		jl2=new JLabel("顾客名",JLabel.CENTER);
+		jl2=new JLabel("商品名",JLabel.CENTER);
 		jt2=new JTextField();
 		jt2.setSize(10,20);
-		jl3=new JLabel("地址",JLabel.CENTER);
+		jl3=new JLabel("商品类型",JLabel.CENTER);
 		jt3=new JTextField();
 		jt3.setSize(10,20);
-		jl4=new JLabel("电话",JLabel.CENTER);
+		jl4=new JLabel("商品价格",JLabel.CENTER);
 		jt4=new JTextField();
 		jt4.setSize(10,20);
-		jl5=new JLabel("邮编",JLabel.CENTER);
-		jt5=new JTextField();
-		jt5.setSize(10,20);
+		
 		
 		
 		button1=new JButton("提交");
@@ -84,8 +82,7 @@ public class CustomerAdd extends JFrame implements ActionListener{
 		pl2.add(jt3);
 		pl2.add(jl4);
 		pl2.add(jt4);
-		pl2.add(jl5);
-		pl2.add(jt5);
+		
 	
 		
 		pl3.add(button1);
@@ -94,7 +91,7 @@ public class CustomerAdd extends JFrame implements ActionListener{
 		this.add(pl1,BorderLayout.NORTH);
 		this.add(pl2,BorderLayout.CENTER);
 		this.add(pl3,BorderLayout.SOUTH);
-		this.setSize(300,300);
+		this.setSize(300,260);
 		
 		this.setVisible(true);
 		this.setResizable(false);//使框架不能伸缩
@@ -110,15 +107,14 @@ public class CustomerAdd extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		if(arg0.getSource()==button1){
-			if(jt1.getText().equals("")||jt2.getText().equals("")||jt3.getText().equals("")||jt4.getText().toString().equals("")||jt5.getText().toString().equals(""))
+			if(jt1.getText().equals("")||jt2.getText().equals("")||jt3.getText().equals("")||jt4.getText().toString().equals(""))
 			{
-				JOptionPane.showMessageDialog(this,"请填满客户信息!!");
+				JOptionPane.showMessageDialog(this,"请填满商品信息!!");
 			}
 			else{
-			cservice.addCustomer(jt1.getText().toString(),jt2.getText().toString(),jt3.getText().toString(),jt4.getText().toString(),
-					jt5.getText().toString());
+			pservice.addProduct(jt1.getText().toString(),jt2.getText().toString(),jt3.getText().toString(),Double.valueOf(jt4.getText().toString()));
 			JOptionPane.showMessageDialog(this,"添加成功!!");
-			cservice.addCustomer2(jt1.getText().toString(),"000000");
+		
 			this.dispose();
 			}
 					

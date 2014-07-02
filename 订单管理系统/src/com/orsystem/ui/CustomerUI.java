@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -16,6 +17,8 @@ import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.BoxLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -28,14 +31,16 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JComboBox;
 
-import com.orsystem.Service.ProductService;
+import com.orsystem.DataService.ProductService;
+import com.orsystem.DataTable.Product;
 import com.orsystem.TableModal.ETableModal;
 import com.orsystem.TableModal.PTableModal;
-import com.orsystem.modal.Product;
+import com.orsystem.control.CUI_Control;
+import com.orsystem.control.dis_Date;
 import javax.swing.JTextField;
 import java.awt.GridLayout;
 
-public class CustomerUI extends JFrame implements ItemListener{
+public class CustomerUI extends JFrame implements ItemListener, ActionListener{
 
 	//主界面的主Panel
 	private JPanel MainPanel;
@@ -51,9 +56,22 @@ public class CustomerUI extends JFrame implements ItemListener{
 	private JTextField JT_pname;
 	private JTextField JT_pclass;
 	private JTextField JT_pprice;
+	//按钮
+	JButton btn_cmsg,btn_hmsg,btn_mycar, btn_changep,btn_exit,btn_addToCar,btn_Topay;
 	
 	//下拉框
-	JComboBox CB_productclass,CB_price;
+	JComboBox CB_productclass,CB_price,CB_selectnum;
+	//登录的账号
+	private String acount;
+	//显示日期的类
+	dis_Date dis_date;
+	//客户界面的control类
+	private CUI_Control ccontrol;
+	
+	//标记是否产生一个新订单
+	private boolean flag=false;
+	//订单号
+	private String orderno;
 	/**
 	 * Launch the application.
 	 * @throws SQLException 
@@ -61,7 +79,7 @@ public class CustomerUI extends JFrame implements ItemListener{
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
-	new CustomerUI();
+	new CustomerUI("c2005001");
 	}
 
 	/**
@@ -70,16 +88,21 @@ public class CustomerUI extends JFrame implements ItemListener{
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
 	 */
-	public CustomerUI() throws IOException, ClassNotFoundException, SQLException {
-		this.setSize(871, 588);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	//传进来一个账号，该账号为登录的账号
+	public CustomerUI(String acount) throws IOException, ClassNotFoundException, SQLException {
+		getContentPane().setBackground(new Color(102, 255, 255));
+		this.setSize(951, 587);
+		
 		this.setVisible(true);
 		
 		this.setResizable(false);
 		getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+		this.acount=acount;
+		//初始化控制类
+		ccontrol=new CUI_Control();
 		//新建主界面主Panel
 		MainPanel=new JPanel();
+		MainPanel.setBackground(new Color(102, 204, 51));
 		//添加到JFrame
 		getContentPane().add(MainPanel);
 		//设置布局格式
@@ -87,6 +110,7 @@ public class CustomerUI extends JFrame implements ItemListener{
 		
 		//*********************北部布局开始界限***************************//////////////////////
 		JPanel JP_N = new JPanel();
+		JP_N.setBackground(new Color(102, 204, 102));
 		MainPanel.add(JP_N, BorderLayout.PAGE_START);
 		JP_N.setLayout(new BorderLayout(0, 0));
 		
@@ -96,6 +120,7 @@ public class CustomerUI extends JFrame implements ItemListener{
 		
 		JLabel JL_CustomerNo = new JLabel("\u5BA2\u6237\u53F7\uFF0C");
 		JL_CustomerNo.setFont(new Font("宋体", Font.PLAIN, 20));
+		JL_CustomerNo.setText(acount);
 		toolBar.add(JL_CustomerNo);
 		
 		JLabel JL_welcome = new JLabel("\u60A8\u597D\uFF01\u6B22\u8FCE\u767B\u5F55");
@@ -106,20 +131,38 @@ public class CustomerUI extends JFrame implements ItemListener{
 		JP_N1.setBackground(Color.CYAN);
 		toolBar.add(JP_N1);
 		
-		JButton btn_cmsg = new JButton("\u4E2A\u4EBA\u4FE1\u606F");
+		 btn_cmsg = new JButton("\u4E2A\u4EBA\u4FE1\u606F");
+		
 		btn_cmsg.setFont(new Font("宋体", Font.PLAIN, 15));
 		
-		JButton btn_hmsg = new JButton("\u5386\u53F2\u8BA2\u5355");
+		//添加事件监听事件
+		btn_cmsg.addActionListener(this);
+		
+		 btn_hmsg = new JButton("\u5386\u53F2\u8BA2\u5355");
 		btn_hmsg.setFont(new Font("宋体", Font.PLAIN, 15));
+		//添加监听事件
+		btn_hmsg.addActionListener(this);
 		
-		JButton btn_mycar = new JButton("\u6211\u7684\u8D2D\u7269\u8F66");
+		 btn_mycar = new JButton("\u6211\u7684\u8D2D\u7269\u8F66");
 		btn_mycar.setFont(new Font("宋体", Font.PLAIN, 15));
+		//添加监听事件
+		btn_mycar.addActionListener(this);
 		
-		JButton btn_changep = new JButton("\u4FEE\u6539\u5BC6\u7801");
+		 btn_changep = new JButton("\u4FEE\u6539\u5BC6\u7801");
+		 btn_changep.addActionListener(this);
+		
 		btn_changep.setFont(new Font("宋体", Font.PLAIN, 15));
 		
-		JButton btn_exit = new JButton("\u9000\u51FA");
+		 btn_exit = new JButton("\u9000\u51FA");
+		 btn_exit.addActionListener(this);
+		 
 		btn_exit.setFont(new Font("宋体", Font.PLAIN, 15));
+		
+		//显示日期的书签
+		dis_date=new dis_Date();
+		JLabel lb_date = new JLabel("date");
+		lb_date.setText(dis_date.get_curDate());
+		lb_date.setFont(new Font("宋体", Font.PLAIN, 15));
 		////***********分组布局************************///////////////////
 		GroupLayout gl_JP_N1 = new GroupLayout(JP_N1);
 		gl_JP_N1.setHorizontalGroup(
@@ -135,6 +178,8 @@ public class CustomerUI extends JFrame implements ItemListener{
 					.addComponent(btn_changep)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(btn_exit)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(lb_date)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		gl_JP_N1.setVerticalGroup(
@@ -146,7 +191,8 @@ public class CustomerUI extends JFrame implements ItemListener{
 						.addComponent(btn_changep)
 						.addComponent(btn_cmsg)
 						.addComponent(btn_hmsg)
-						.addComponent(btn_mycar)))
+						.addComponent(btn_mycar)
+						.addComponent(lb_date)))
 		);
 		///*****分组布局结束**///////////
 		JP_N1.setLayout(gl_JP_N1);
@@ -156,10 +202,12 @@ public class CustomerUI extends JFrame implements ItemListener{
 		
 		/////************中部布局开始界限********************////////////////////////
 		JPanel JP_C = new JPanel();
+		JP_C.setBackground(new Color(51, 204, 153));
 		MainPanel.add(JP_C, BorderLayout.CENTER);
 		
 		////中部局部嵌套的北部布局
 		JPanel JP_C1 = new JPanel();
+		JP_C1.setBackground(new Color(102, 255, 255));
 	
 		JLabel LB_productlist = new JLabel("\u5546\u54C1\u5217\u8868");
 		LB_productlist.setFont(new Font("宋体", Font.PLAIN, 25));
@@ -168,6 +216,7 @@ public class CustomerUI extends JFrame implements ItemListener{
 
 		//中部布局嵌套的南部布局
 		JPanel JP_C3 = new JPanel();
+		JP_C3.setBackground(new Color(102, 255, 255));
 		
 		//初始化商品数据库服务类
 		ps=new ProductService();
@@ -204,6 +253,7 @@ public class CustomerUI extends JFrame implements ItemListener{
 		
 		//中部布局嵌套的中部布局
 		JPanel JP_C2 = new JPanel();
+		JP_C2.setBackground(new Color(102, 255, 255));
 		JP_C.add(JP_C2, BorderLayout.CENTER);
 		
 		
@@ -213,6 +263,7 @@ public class CustomerUI extends JFrame implements ItemListener{
 		
 		//下拉框，选择商品类别
 		CB_productclass = new JComboBox(ps.getAllClassName());
+	
 		//添加监听事件
 		CB_productclass.addItemListener(this);
 		JP_C2.add(CB_productclass);
@@ -243,13 +294,15 @@ public class CustomerUI extends JFrame implements ItemListener{
 		JP_S.setLayout(new BorderLayout(0, 0));
 		
 		JPanel JP_S1 = new JPanel();
+		JP_S1.setBackground(new Color(102, 255, 255));
 		JP_S.add(JP_S1,BorderLayout.NORTH);
 		//南部布局嵌套的中部布局
 		JLabel lblNewLabel_5 = new JLabel("\u9009\u4E2D\u7684\u5546\u54C1\u4FE1\u606F");
-		lblNewLabel_5.setFont(new Font("宋体", Font.PLAIN, 25));
+		lblNewLabel_5.setFont(new Font("黑体", Font.PLAIN, 25));
 		JP_S1.add(lblNewLabel_5);
 		
 		JPanel JP_S2 = new JPanel();
+		JP_S2.setBackground(new Color(102, 255, 255));
 		JP_S.add(JP_S2, BorderLayout.CENTER);
 		
 		JPanel panel_9 = new JPanel();
@@ -294,20 +347,25 @@ public class CustomerUI extends JFrame implements ItemListener{
 		
 		//南部布局嵌套的南部布局
 		JPanel JP_S3 = new JPanel();
+		JP_S3.setBackground(new Color(102, 255, 255));
 		JP_S.add(JP_S3, BorderLayout.SOUTH);
 		
 		JLabel lblNewLabel_10 = new JLabel("\u8BF7\u9009\u62E9\u5546\u54C1\u6570\u91CF");
 		lblNewLabel_10.setFont(new Font("宋体", Font.PLAIN, 20));
 		String[] num={"1","2","3","4","5"};
-		JComboBox CB_selectnum = new JComboBox(num);
+		CB_selectnum = new JComboBox(num);
 		
 		//CB_selectnum.addItem(num);
 		
-		JButton btnNewButton_5 = new JButton("\u6DFB\u52A0\u5230\u8D2D\u7269\u8F66");
-		btnNewButton_5.setFont(new Font("宋体", Font.PLAIN, 20));
+		btn_addToCar = new JButton("\u6DFB\u52A0\u5230\u8D2D\u7269\u8F66");
+		btn_addToCar.setFont(new Font("宋体", Font.PLAIN, 20));
+		//增加监听事件
+		btn_addToCar.addActionListener(this);
 		
-		JButton btnNewButton_6 = new JButton("\u53BB\u7ED3\u7B97");
-		btnNewButton_6.setFont(new Font("宋体", Font.PLAIN, 20));
+		 btn_Topay = new JButton("\u53BB\u7ED3\u7B97");
+		btn_Topay.setFont(new Font("宋体", Font.PLAIN, 20));
+		//添加监听事件
+		btn_Topay.addActionListener(this);
 		////******************分组布局部分*************************/////////////////
 		GroupLayout gl_JP_S3 = new GroupLayout(JP_S3);
 		gl_JP_S3.setHorizontalGroup(
@@ -322,9 +380,9 @@ public class CustomerUI extends JFrame implements ItemListener{
 							.addPreferredGap(ComponentPlacement.RELATED, 274, Short.MAX_VALUE))
 						.addGroup(Alignment.TRAILING, gl_JP_S3.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(btnNewButton_5)
+							.addComponent(btn_addToCar)
 							.addGap(38)))
-					.addComponent(btnNewButton_6)
+					.addComponent(btn_Topay)
 					.addGap(94))
 		);
 		gl_JP_S3.setVerticalGroup(
@@ -336,8 +394,8 @@ public class CustomerUI extends JFrame implements ItemListener{
 						.addComponent(lblNewLabel_10))
 					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addGroup(gl_JP_S3.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnNewButton_6)
-						.addComponent(btnNewButton_5)))
+						.addComponent(btn_Topay)
+						.addComponent(btn_addToCar)))
 		);
 		//********************分组布局部分***************************//////////////
 		//将南部布局嵌套的南部布局设为分组布局
@@ -470,8 +528,84 @@ public class CustomerUI extends JFrame implements ItemListener{
 			} 
 		}
 	}
-	
-	
 	}
+	}
+	///****按钮事件监听******///////////
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		//如果用户点击个人信息
+		if(e.getSource()==btn_cmsg)
+		{
+			try {
+				new CUI_cmsg(this.acount);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+		}
+		else if(e.getSource()==btn_hmsg){
+			try {
+				new CUI_hmsg(this.acount);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+		}
+		else if(e.getSource()==btn_addToCar){
+			//得到被选择的数量
+			String qty=(String) CB_selectnum.getSelectedItem();
+			//添加商品到购物车
+			
+			try {
+				if(JT_pno.getText().equals("")){
+					JOptionPane.showMessageDialog(this,"请先选择商品!!");
+				}
+				else{
+					if(flag==false){
+						//生成一个新的订单号
+						orderno=ccontrol.createOrderNo();
+					ccontrol.addOrder(acount,orderno,JT_pno.getText(), JT_pname.getText(), qty, JT_pprice.getText());
+					JOptionPane.showMessageDialog(this,"添加成功!!");
+					flag=true;
+					}else
+					{
+						ccontrol.addOrder(acount,orderno,JT_pno.getText(), JT_pname.getText(), qty, JT_pprice.getText());
+						JOptionPane.showMessageDialog(this,"添加成功!!");
+						
+					}
+				}
+				
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+			
+		}
+		else if(e.getSource()==btn_mycar){
+			try {
+				new CUI_OrderCar(this.acount);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+		}
+		else if(e.getSource()==btn_Topay){
+			//标记作用，使得点击去购物车结算则再回到购买商品界面会从新生成一个订单
+			flag=false;
+			try {
+				new CUI_OrderCar(this.acount);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		else if(e.getSource()==btn_changep){
+		//new CUI_changeP(this.acount);
+			new changePasswdUI("Customer",this.acount);
+		}
+		else if(e.getSource()==btn_exit){
+			this.dispose();
+		}
 	}    
 }

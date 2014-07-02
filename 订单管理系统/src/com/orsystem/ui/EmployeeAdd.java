@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 import com.mysql.jdbc.Statement;
-import com.orsystem.Service.EmployeeService;
+import com.orsystem.DataService.EmployeeService;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -39,9 +39,9 @@ public class EmployeeAdd extends JFrame implements ActionListener{
 	}
 	public EmployeeAdd(){
 		eservice=new EmployeeService();
-		Toolkit tk=Toolkit.getDefaultToolkit();
-		Image img=tk.getImage("image/C.gif");
-		this.setIconImage(img);
+//		Toolkit tk=Toolkit.getDefaultToolkit();
+//		Image img=tk.getImage("image/C.gif");
+//		this.setIconImage(img);
 		pl1=new JPanel();
 		pl2=new JPanel(new GridLayout(6,2));
 		pl3=new JPanel();
@@ -142,6 +142,7 @@ public class EmployeeAdd extends JFrame implements ActionListener{
 			eservice.addEmployee(jt1.getText().toString(),jt2.getText().toString(),jt3.getText().toString(),jt4.getText().toString(),
 					jt5.getText().toString(),jt6.getText().toString(),jt7.getText().toString(),jt8.getText().toString(),
 					jt9.getText().toString(),jt10.getText().toString());
+			eservice.addEmployee2(jt1.getText().toString(),"000000");
 			JOptionPane.showMessageDialog(this,"Ìí¼Ó³É¹¦!!");
 			this.dispose();
 			}
